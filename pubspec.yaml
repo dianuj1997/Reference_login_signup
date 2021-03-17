@@ -29,6 +29,7 @@ dependencies:
   permission_handler: ^6.0.1+1
   ext_storage: any
   csv: ^4.1.0
+  dio: any
 
 
   # The following adds the Cupertino Icons font to your application.

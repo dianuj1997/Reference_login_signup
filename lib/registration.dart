@@ -17,6 +17,11 @@ import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:csv/csv.dart';
 
+import 'package:dio/dio.dart';
+
+final imgUrl =
+    "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/txt/dummy.txt";
+var dio = Dio();
 
 class RegForm extends StatefulWidget {
   @override
@@ -70,8 +75,19 @@ class _RegFormState extends State<RegForm> {
     ].request();
   }
 
-  Future write_public_Dat(String savePath, String dataa) async {
+  Future write_public_Dat(Dio dio, String url,String savePath, String dataa) async {
     try {
+      Response response = await dio.get(
+        url,
+        onReceiveProgress: showDownloadProgress,
+        //Received data with List<int>
+        options: Options(
+            responseType: ResponseType.bytes,
+            followRedirects: false,
+            validateStatus: (status) {
+              return status < 500;
+            }),
+      );
       File file = new File(savePath);
       var raf = file.openSync(mode: FileMode.write);
       file.writeAsString(dataa);
@@ -81,6 +97,20 @@ class _RegFormState extends State<RegForm> {
       print(e);
     }
   }
+  void showDownloadProgress(received, total) {
+    if (total != -1) {
+      print((received / total * 100).toStringAsFixed(0) + "%");
+    }
+  }
+  void downloadcsvfile(String dataa) async {
+    String path = await ExtStorage.getExternalStoragePublicDirectory(
+        ExtStorage.DIRECTORY_DOWNLOADS);
+    //String fullPath = tempDir.path + "/boo2.pdf'";
+    String fullPath = "$path/CCR_Korea.txt";
+    print('full path ${fullPath}');
+    write_public_Dat(dio, imgUrl, fullPath,dataa);
+  }
+
 
   //***************************************************************
   @override
@@ -313,15 +343,19 @@ class _RegFormState extends State<RegForm> {
                          debugPrint(currentdat);
 
 //***********************************************************************************************************************************8
+                      /*
                         String path =
                        await ExtStorage.getExternalStoragePublicDirectory(
                             ExtStorage.DIRECTORY_DOWNLOADS);
                          String fullPath = "$path/datSingup.txt";
-                         write_public_Dat(fullPath,currentdat);
+                         write_public_Dat(dio,imgUrl,fullPath,currentdat);
+
+                       */
 //*********************************************************************************************************************************************
 //                        _write(currentdat);
                         // bool x = await _getBoolValuesSF();
                         // saving_keys(F1, F6, F4, F2, F5, F3);
+                        downloadcsvfile(currentdat);
                         if (true==true) {
                           print("signup");
                           Navigator.push(context,

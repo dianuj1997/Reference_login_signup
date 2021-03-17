@@ -6,6 +6,8 @@ import 'package:sampleproject/forgot_email.dart';
 import 'package:flutter_string_encryption/flutter_string_encryption.dart';
 import 'dart:convert' as convert;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'main_page.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -25,6 +27,15 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+  void getPermission() async {
+    print("getPermission");
+    // Map<PermissionGroup, PermissionStatus> permissions =
+    // await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+    ].request();
+  }
+
   final cryptor = new PlatformStringCryptor();
   final myController1 = TextEditingController();
   final myController2 = TextEditingController();
